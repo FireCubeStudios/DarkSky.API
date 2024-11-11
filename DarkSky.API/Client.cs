@@ -11,9 +11,15 @@ namespace DarkSky.API
 	{
 		private HttpClient httpClient = new HttpClient();
 
-		public async void Login(String Username, String AppPassword)
+		private AuthService authService = new AuthService();
+		public async Task Login(String Username, String AppPassword)
 		{
-			httpClient = await new AppPasswordService().LoginAsync(Username, AppPassword);
+			httpClient = await authService.LoginAsync(Username, AppPassword);
+		}
+
+		public async Task GetCurrentUser()
+		{
+
 		}
 	}
 }
