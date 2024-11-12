@@ -8,7 +8,13 @@ namespace DarkSky.API.Tests
 		}
 
 		[Test]
-		public void Test1()
+		public void AuthenticationTest()
+		{
+			Assert.Pass();
+		}
+
+		[Test]
+		public void GetCurrentProfileTest()
 		{
 			Assert.Pass();
 		}

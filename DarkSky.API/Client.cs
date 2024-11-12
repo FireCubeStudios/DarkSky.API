@@ -1,4 +1,6 @@
-﻿using DarkSky.API.Services;
+﻿using DarkSky.API.ATProtocol;
+using DarkSky.API.Classes;
+using DarkSky.API.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +11,19 @@ namespace DarkSky.API
 {
 	public class Client
 	{
-		private HttpClient httpClient = new HttpClient();
-
+		private ATProtoClient ATProtoClient = new ATProtoClient();
 		private AuthService authService = new AuthService();
+		private ProfileService profileService;
+
 		public async Task Login(String Username, String AppPassword)
 		{
-			httpClient = await authService.LoginAsync(Username, AppPassword);
+			ATProtoClient = await authService.LoginAsync(Username, AppPassword);
 		}
 
-		public async Task GetCurrentUser()
+		public async Task<Profile> GetCurrentUserAsync()
 		{
-
+			profileService = new ProfileService(ATProtoClient);
+			return await profileService.GetProfileAsync(ATProtoClient.Session.AccountHandle);
 		}
 	}
 }

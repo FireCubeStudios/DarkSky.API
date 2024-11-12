@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DarkSky.API.Core\DarkSky.API.Core.csproj" />
     <ProjectReference Include="..\DarkSky.API\DarkSky.API.csproj" />
   </ItemGroup>
 

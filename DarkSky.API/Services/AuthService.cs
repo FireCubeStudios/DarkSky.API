@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DarkSky.API.ATProtocol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -11,40 +12,45 @@ namespace DarkSky.API.Services
 {
 	public class AuthService
 	{
-		private const string AUTH_SESSION_ENDPOINT = "/xrpc/com.atproto.server.createSession";
 		private const string ACCESS_TOKEN = "accessJwt";
 		private const string REFRESH_TOKEN = "refreshJwt";
 		private const string ACCOUNT_HANDLE = "handle";
 		private const string ACCOUNT_DID = "did";
+		private const string ACCOUNT_PDS_URL = "serviceEndpoint";
 
-		private string? RefreshToken;
-		private string? AccessToken;
-		private string? AccountHandle;
-		private string? AccountDid;
-
-		public async Task<HttpClient> LoginAsync(string username, string password)
+		public async Task<ATProtoClient> LoginAsync(string username, string password)
 		{
-			HttpClient httpClient = new HttpClient
-			{
-				BaseAddress = new Uri(Constants.BaseUrl)
-			};
-			var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
-			httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
+			ATProtoClient ATProtoClient = new ATProtoClient();
+
+			// com.atproto.server.createSession JSON body payload
+			// identifier = username/handle (firecube.bsky.social)
+			string payload = JsonSerializer.Serialize(
+				new
+				{
+					identifier = username,
+					password
+				}
+			);
+			var content = new StringContent(payload, Encoding.UTF8, "application/json");
 
 			// Send a login request
-			var response = await httpClient.GetAsync(AUTH_SESSION_ENDPOINT);
+			var response = await ATProtoClient.PostAsync(Constants.AUTH_SESSION_ENDPOINT, content);
 			response.EnsureSuccessStatusCode();
 
-			// Extract token from response
-			using var doc = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
-			AccessToken = doc.RootElement.GetProperty(ACCESS_TOKEN).GetString();
-			RefreshToken = doc.RootElement.GetProperty(REFRESH_TOKEN).GetString();
-			AccountHandle = doc.RootElement.GetProperty(ACCOUNT_HANDLE).GetString();
-			AccountDid = doc.RootElement.GetProperty(ACCOUNT_DID).GetString();
-
-			httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
-
-			return httpClient;
+			// Extract data from response
+			using (JsonDocument json = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync()))
+			{
+				JsonElement root = json.RootElement;
+				ATProtoClient.Session = new(
+					root.GetProperty(ACCOUNT_DID).GetString(),
+					root.GetProperty(ACCOUNT_HANDLE).GetString(),
+					root.EnumerateObject().FirstOrDefault(property => property.Name == ACCOUNT_PDS_URL).Value.GetString(),
+					root.GetProperty(ACCESS_TOKEN).GetString(),
+					root.GetProperty(REFRESH_TOKEN).GetString()
+				);
+			}
+			
+			return ATProtoClient;
 		}
 	}
 }
