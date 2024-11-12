@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DarkSky.API
 {
-	public class Client
+	public class BlueSkyClient
 	{
 		public static ATProtoClient ATProtoClient { get; set; } = new ATProtoClient();
 		public Profile CurrentProfile { get; set; } // Get the authenticated account's profile

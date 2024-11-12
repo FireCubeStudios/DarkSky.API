@@ -15,6 +15,8 @@ namespace DarkSky.API
 
 		public const string GET_PROFILE_ENDPOINT = "/xrpc/app.bsky.actor.getProfile";
 
+		public const string GET_FEED_ENDPOINT = "/xrpc/app.bsky.feed.getFeed";
 		public const string GET_AUTHOR_FEED_ENDPOINT = "/xrpc/app.bsky.feed.getAuthorFeed";
+		public const string GET_TIMELINE_ENDPOINT = "/xrpc/app.bsky.feed.getTimeline";
 	}
 }

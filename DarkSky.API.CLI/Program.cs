@@ -1,4 +1,6 @@
-﻿namespace DarkSky.API.CLI
+﻿using DarkSky.API.Services;
+
+namespace DarkSky.API.CLI
 {
 	internal class Program
 	{
@@ -28,6 +30,15 @@
 						var user = client.CurrentProfile;
 						Console.WriteLine(user.DisplayName);
 						Console.WriteLine(user.DID);
+						break;
+					case "timeline":
+						var feedT = await FeedService.GetTimelineAsync();
+						foreach (var item in feedT)
+						{
+							Console.WriteLine(item.LikeCount);
+							Console.WriteLine(item.ReplyCount);
+							Console.WriteLine(item.Author.DisplayName);
+						}
 						break;
 					case "accountfeed":
 						var feed = await client.CurrentProfile.GetProfileFeedAsync();

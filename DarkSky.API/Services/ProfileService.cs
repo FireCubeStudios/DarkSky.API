@@ -18,7 +18,7 @@ namespace DarkSky.API.Services
 		// https://docs.bsky.app/docs/api/app-bsky-actor-get-profile
 		public static async Task<Profile> GetProfileAsync(string actor)
 		{
-			var response = await Client.ATProtoClient.GetAsync($"{Constants.GET_PROFILE_ENDPOINT}?actor={actor}");
+			var response = await BlueSkyClient.ATProtoClient.GetAsync($"{Constants.GET_PROFILE_ENDPOINT}?actor={actor}");
 			response.EnsureSuccessStatusCode();
 
 			var options = new JsonSerializerOptions
