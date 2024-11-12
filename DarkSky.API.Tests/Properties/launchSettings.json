@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "DarkSky.API.Tests": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "BLUESKY_PASSWORD": "syg3-b3nt-pdm5-zdym",
+        "BLUESKY_USERNAME": "firecube.bsky.social"
+      }
+    }
+  }
+}

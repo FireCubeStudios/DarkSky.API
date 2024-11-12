@@ -8,9 +8,10 @@ namespace DarkSky.API.Classes
 {
 	public class Profile
 	{
-		public int DID { get; }
+		public string DID { get; }
 		public string Handle { get; }
 		public string DisplayName { get; }
+		public string Description { get;  }
 		public Uri Avatar { get; }
 		public Uri Banner { get; }
 		public int Followers { get; }
@@ -18,12 +19,12 @@ namespace DarkSky.API.Classes
 		public int PostsCount { get; }
 		public DateTime CreatedAt { get; }
 
-		public Profile(int did, string handle, string displayName, string avatar, string banner,
-						int followersCount, int followsCount, int postsCount, string createdAt)
+		public Profile(string did, string handle, string displayName, string avatar, string createdAt, string description, string banner, int followersCount, int followsCount, int postsCount)
 		{
 			DID = did;
 			Handle = handle;
 			DisplayName = displayName;
+			Description = description;
 			Avatar = new Uri(avatar);
 			Banner = new Uri(banner);
 			Followers = followersCount;

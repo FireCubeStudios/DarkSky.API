@@ -15,15 +15,17 @@ namespace DarkSky.API
 		private AuthService authService = new AuthService();
 		private ProfileService profileService;
 
-		public async Task Login(String Username, String AppPassword)
+		public async Task LoginAsync(String Username, String AppPassword)
 		{
 			ATProtoClient = await authService.LoginAsync(Username, AppPassword);
+			profileService = new ProfileService(ATProtoClient);
 		}
 
 		public async Task<Profile> GetCurrentUserAsync()
 		{
-			profileService = new ProfileService(ATProtoClient);
 			return await profileService.GetProfileAsync(ATProtoClient.Session.AccountHandle);
 		}
+
+		public ATProtoClient GetATProtoClient() => ATProtoClient;
 	}
 }

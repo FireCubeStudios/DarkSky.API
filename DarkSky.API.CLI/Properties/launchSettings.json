@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DarkSky.API.CLI": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

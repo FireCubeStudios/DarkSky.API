@@ -1,6 +1,7 @@
 ﻿using DarkSky.API.ATProtocol;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -21,6 +22,7 @@ namespace DarkSky.API.Services
 		public async Task<ATProtoClient> LoginAsync(string username, string password)
 		{
 			ATProtoClient ATProtoClient = new ATProtoClient();
+			AuthSession session;
 
 			// com.atproto.server.createSession JSON body payload
 			// identifier = username/handle (firecube.bsky.social)
@@ -41,16 +43,16 @@ namespace DarkSky.API.Services
 			using (JsonDocument json = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync()))
 			{
 				JsonElement root = json.RootElement;
-				ATProtoClient.Session = new(
+				session = new(
 					root.GetProperty(ACCOUNT_DID).GetString(),
 					root.GetProperty(ACCOUNT_HANDLE).GetString(),
-					root.EnumerateObject().FirstOrDefault(property => property.Name == ACCOUNT_PDS_URL).Value.GetString(),
+					root.GetProperty("didDoc").GetProperty("service")[0].GetProperty("serviceEndpoint").GetString(),
 					root.GetProperty(ACCESS_TOKEN).GetString(),
 					root.GetProperty(REFRESH_TOKEN).GetString()
 				);
 			}
 			
-			return ATProtoClient;
+			return new ATProtoClient(session);
 		}
 	}
 }

@@ -19,11 +19,11 @@ namespace DarkSky.API.ATProtocol
 	///
 	public class AuthSession
 	{
-		public string AccountDID { get; set; }
-		public string AccountHandle { get; set; }
-		public string PDSUrl { get; set; }
-		public string AccessToken { get; set; }
-		public string RefreshToken { get; set; }
+		public string AccountDID { get; }
+		public string AccountHandle { get; }
+		public string PDSUrl { get; }
+		public string AccessToken { get; }
+		public string RefreshToken { get; }
 
 		// Constructor
 		public AuthSession(string accountDID, string accountHandle, string pdsUrl, string accessToken, string refreshToken)
