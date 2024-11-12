@@ -1,36 +1,27 @@
-﻿using System;
+﻿using DarkSky.API.ATProtocol;
+using DarkSky.API.Helpers;
+using DarkSky.API.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DarkSky.API.Classes
 {
-	public class Profile
-	{
-		public string DID { get; }
-		public string Handle { get; }
-		public string DisplayName { get; }
-		public string Description { get;  }
-		public Uri Avatar { get; }
-		public Uri Banner { get; }
-		public int Followers { get; }
-		public int Following {  get; }
-		public int PostsCount { get; }
-		public DateTime CreatedAt { get; }
-
-		public Profile(string did, string handle, string displayName, string avatar, string createdAt, string description, string banner, int followersCount, int followsCount, int postsCount)
-		{
-			DID = did;
-			Handle = handle;
-			DisplayName = displayName;
-			Description = description;
-			Avatar = new Uri(avatar);
-			Banner = new Uri(banner);
-			Followers = followersCount;
-			Following = followsCount;
-			PostsCount = postsCount;
-			CreatedAt = DateTime.Parse(createdAt);
-		}
+	public record Profile(
+		string DID,
+		string Handle,
+		string DisplayName,
+		string Description,
+		Uri Avatar,
+		Uri Banner,
+		int FollowersCount,
+		int FollowsCount,
+		int PostsCount,
+		DateTime CreatedAt
+	){
+		public async Task<List<Post>> GetProfileFeedAsync() => await FeedService.GetAuthorFeed(DID);
 	}
 }

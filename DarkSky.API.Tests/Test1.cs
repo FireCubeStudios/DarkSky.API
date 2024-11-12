@@ -22,7 +22,7 @@ namespace DarkSky.API.Tests
 		[Test]
 		public void AuthenticationTest()
 		{
-			ATProtoClient ATProtoClient = client.GetATProtoClient();
+			ATProtoClient ATProtoClient = client.ATProtoClient;
 			if (ATProtoClient is null || ATProtoClient.Session is null)
 				Assert.Fail("Authentication test failed (null)");
 			else if(ATProtoClient.Session.AccountHandle != username)

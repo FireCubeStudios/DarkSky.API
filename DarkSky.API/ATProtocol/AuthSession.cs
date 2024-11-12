@@ -16,16 +16,16 @@ namespace DarkSky.API.ATProtocol
 
 	/// Since .NET Standard 2.1 does not support records this is commented out
 	///public record AuthSession(string? AccountDID, string? AccountHandle, string? PDSUrl, string? AccessToken, string? RefreshToken);
-	///
 	public class AuthSession
 	{
 		public string AccountDID { get; }
 		public string AccountHandle { get; }
-		public string PDSUrl { get; }
+		public string PDSUrl { get; set; }
 		public string AccessToken { get; }
-		public string RefreshToken { get; }
+		public string RefreshToken { get; set; }
 
-		// Constructor
+		public AuthSession(string refreshToken) => RefreshToken = refreshToken; // used for refresh token setup
+
 		public AuthSession(string accountDID, string accountHandle, string pdsUrl, string accessToken, string refreshToken)
 		{
 			AccountDID = accountDID;

@@ -14,13 +14,28 @@
 					case "exit":
 						run = false;
 						break;
+					case "refresh":
+						await client.RefreshManualAsync(input[1]);
+						Console.WriteLine(Client.ATProtoClient.Session.AccountHandle);
+						Console.WriteLine(Client.ATProtoClient.Session.RefreshToken);
+						break;
 					case "login":
 						await client.LoginAsync(input[1], input[2]);
-						Console.WriteLine(client.GetATProtoClient().Session.AccountHandle);
+						Console.WriteLine(Client.ATProtoClient.Session.AccountHandle);
+						Console.WriteLine(Client.ATProtoClient.Session.RefreshToken);
 						break;
 					case "account":
-						var user = await client.GetCurrentUserAsync();
-						Console.WriteLine("Followers: " + user.Followers);
+						var user = client.CurrentProfile;
+						Console.WriteLine(user.DisplayName);
+						Console.WriteLine(user.DID);
+						break;
+					case "accountfeed":
+						var feed = await client.CurrentProfile.GetProfileFeedAsync();
+						foreach(var item in feed)
+						{
+							Console.WriteLine(item.LikeCount);
+							Console.WriteLine(item.Author.DisplayName);
+						}
 						break;
 					default:
 						Console.WriteLine("Invalid command");

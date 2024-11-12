@@ -11,21 +11,21 @@ namespace DarkSky.API
 {
 	public class Client
 	{
-		private ATProtoClient ATProtoClient = new ATProtoClient();
+		public static ATProtoClient ATProtoClient { get; set; } = new ATProtoClient();
+		public Profile CurrentProfile { get; set; } // Get the authenticated account's profile
 		private AuthService authService = new AuthService();
-		private ProfileService profileService;
 
-		public async Task LoginAsync(String Username, String AppPassword)
+		public async Task LoginAsync(string Username, string AppPassword)
 		{
 			ATProtoClient = await authService.LoginAsync(Username, AppPassword);
-			profileService = new ProfileService(ATProtoClient);
+			CurrentProfile = await ProfileService.GetProfileAsync(ATProtoClient.Session.AccountDID);
 		}
 
-		public async Task<Profile> GetCurrentUserAsync()
+		public async Task RefreshManualAsync(string token)
 		{
-			return await profileService.GetProfileAsync(ATProtoClient.Session.AccountHandle);
+			ATProtoClient.Session = new AuthSession(token);
+			ATProtoClient = await authService.RefreshAsync(ATProtoClient);
+			CurrentProfile = await ProfileService.GetProfileAsync(ATProtoClient.Session.AccountDID);
 		}
-
-		public ATProtoClient GetATProtoClient() => ATProtoClient;
 	}
 }

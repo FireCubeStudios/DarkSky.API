@@ -10,7 +10,8 @@ namespace DarkSky.API.ATProtocol
 {
 	public class ATProtoClient : HttpClient
 	{
-		public AuthSession? Session { get; }
+		public AuthSession? Session { get; set; }
+		public bool IsPDSUrl { get; internal set; } = false; // Is it using the PDS url or the BASE_URL
 
 	   /* 
 		* Constructor for authenticated ATProtoClient
@@ -21,7 +22,8 @@ namespace DarkSky.API.ATProtocol
 		{
 			Session = session;
 			this.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session.AccessToken);
-			BaseAddress = new Uri(Session.PDSUrl ?? Constants.BASE_URL); 
+			BaseAddress = new Uri(Session.PDSUrl ?? Constants.BASE_URL);
+			IsPDSUrl = !String.IsNullOrEmpty(Session.PDSUrl);
 		}
 
 		// Constructor for non-authenticated ATProtoClient
@@ -30,5 +32,8 @@ namespace DarkSky.API.ATProtocol
 		{
 			BaseAddress = new Uri(Constants.BASE_URL); // Use BASE_URL for requests (https://bsky.social)
 		}
+
+		public void SetAccessTokenHeader() => this.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session.AccessToken);
+		public void SetRefreshTokenHeader() => this.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Session.RefreshToken);
 	}
 }

@@ -19,6 +19,38 @@ namespace DarkSky.API.Services
 		private const string ACCOUNT_DID = "did";
 		private const string ACCOUNT_PDS_URL = "serviceEndpoint";
 
+		/*
+		 * Refresh an existing session using the refresh token
+		 * https://docs.bsky.app/docs/api/com-atproto-server-refresh-session
+		 */
+		public async Task<ATProtoClient> RefreshAsync(ATProtoClient client)
+		{
+			AuthSession session;
+
+			client.SetRefreshTokenHeader(); // Set refresh token as authorisation bearer
+			var response = await client.PostAsync(Constants.REFRESH_SESSION_ENDPOINT, null);
+			response.EnsureSuccessStatusCode();
+
+			// Extract data from response
+			using (JsonDocument json = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync()))
+			{
+				JsonElement root = json.RootElement;
+				session = new(
+					root.GetProperty(ACCOUNT_DID).GetString(),
+					root.GetProperty(ACCOUNT_HANDLE).GetString(),
+					root.GetProperty("didDoc").GetProperty("service")[0].GetProperty("serviceEndpoint").GetString(),
+					root.GetProperty(ACCESS_TOKEN).GetString(),
+					root.GetProperty(REFRESH_TOKEN).GetString()
+				);
+			}
+
+			return new ATProtoClient(session);
+		}
+
+		/*
+		 * Create a new session using user credentials
+		 * https://docs.bsky.app/docs/api/com-atproto-server-create-session
+		 */
 		public async Task<ATProtoClient> LoginAsync(string username, string password)
 		{
 			ATProtoClient ATProtoClient = new ATProtoClient();
@@ -36,7 +68,7 @@ namespace DarkSky.API.Services
 			var content = new StringContent(payload, Encoding.UTF8, "application/json");
 
 			// Send a login request
-			var response = await ATProtoClient.PostAsync(Constants.AUTH_SESSION_ENDPOINT, content);
+			var response = await ATProtoClient.PostAsync(Constants.CREATE_SESSION_ENDPOINT, content);
 			response.EnsureSuccessStatusCode();
 
 			// Extract data from response
